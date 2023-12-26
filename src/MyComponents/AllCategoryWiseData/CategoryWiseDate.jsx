@@ -13,6 +13,9 @@ const CategoryWiseDate = ({ id }) => {
   const [categoryId, setCategoryId] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
+  const [brandName, setBrandName] = useState("");
+  const [sim, setSim] = useState("");
+  const [netWork, setNetwork] = useState("");
 
   const SlideLeft = () => {
     var slider = document.getElementById("slider");
@@ -22,6 +25,30 @@ const CategoryWiseDate = ({ id }) => {
     var slider = document.getElementById("slider");
     slider.scrollLeft = slider.scrollLeft + 500;
   };
+
+  const brand = [
+    { _id: "1", name: "redmi" },
+    { _id: "2", name: "sumsung" },
+    { _id: "3", name: "lava" },
+    { _id: "4", name: "moto" },
+    { _id: "5", name: "realmi" },
+    { _id: "6", name: "google" },
+    { _id: "7", name: "apple" },
+  ];
+
+  const simArray = [
+    { _id: "1", name: "Single " },
+    { _id: "2", name: "Duel" },
+  ];
+
+  const networkArray = [
+    { _id: "1", name: "1g" },
+    { _id: "2", name: "2g" },
+    { _id: "3", name: "3g" },
+    { _id: "4", name: "4g" },
+    { _id: "5", name: "5g" },
+    { _id: "6", name: "6g" },
+  ];
 
   //api show catogery is calling
   const [category, setCategory] = useState([]);
@@ -49,11 +76,11 @@ const CategoryWiseDate = ({ id }) => {
   const filterProduct = useCallback(async () => {
     try {
       const res = await axios.get(
-        `https://lokender-backend-api.vercel.app/api/v1/filters?minPrice=${minPrice}&maxPrice=${maxPrice}&categoryId=${categoryId}`
+        `https://lokender-backend-api.vercel.app/api/v1/filters?minPrice=${minPrice}&maxPrice=${maxPrice}&categoryId=${categoryId}&brand=${brandName}&sim=${sim}&network=${netWork}`
       );
       setProducts(res.data.products);
     } catch {}
-  }, [minPrice, maxPrice, categoryId]);
+  }, [minPrice, maxPrice, categoryId, brandName, sim, netWork]);
 
   useEffect(() => {
     filterProduct();
@@ -65,7 +92,7 @@ const CategoryWiseDate = ({ id }) => {
         <div className="fashviewcontl">
           <h3>Filters</h3>
           <div className="filtercont ft">
-            <Accordion defaultActiveKey="0">
+            <Accordion defaultActiveKey="1">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>CATEGORIES</Accordion.Header>
                 <Accordion.Body>
@@ -81,7 +108,7 @@ const CategoryWiseDate = ({ id }) => {
               </Accordion.Item>
             </Accordion>
 
-            <Accordion defaultActiveKey="0">
+            <Accordion defaultActiveKey="1">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>Prices</Accordion.Header>
                 <Accordion.Body>
@@ -95,18 +122,63 @@ const CategoryWiseDate = ({ id }) => {
                   >
                     <select onChange={(e) => setMinPrice(e.target.value)}>
                       <option value={"0"}>₹ 0</option>
-                      <option value={"1000"}>₹1,000</option>
-                      <option value={"2000"}>₹2,000</option>
-                      <option value={"3000"}>₹3,000</option>
+                      <option value={"1000"}>₹ 1,000</option>
+                      <option value={"2000"}>₹ 2,000</option>
+                      <option value={"3000"}>₹ 3,000</option>
                     </select>
                     <p style={{ marginTop: "6px" }}>To</p>
                     <select onChange={(e) => setMaxPrice(e.target.value)}>
-                      <option value={"1000"}>₹1,000</option>
-                      <option value={"2000"}>₹2,000</option>
-                      <option value={"3000"}>₹3,000</option>
-                      <option value={"40000"}>₹4,000</option>
+                      <option value={"1000"}>₹ 1,000</option>
+                      <option value={"2000"}>₹ 2,000</option>
+                      <option value={"3000"}>₹ 3,000</option>
+                      <option value={"40000"}>₹ 4,000</option>
                     </select>
                   </div>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+            <Accordion defaultActiveKey="1">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>Brand</Accordion.Header>
+                <Accordion.Body>
+                  {brand.slice(0, 10)?.map((item) => (
+                    <p
+                      onClick={() => setBrandName(item.name)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {item.name}
+                    </p>
+                  ))}
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+            <Accordion defaultActiveKey="1">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>Sim Type</Accordion.Header>
+                <Accordion.Body>
+                  {simArray.slice(0, 10)?.map((item) => (
+                    <p
+                      onClick={() => setBrandName(item.name)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {item.name}
+                    </p>
+                  ))}
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+            <Accordion defaultActiveKey="1">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>Network Type</Accordion.Header>
+                <Accordion.Body>
+                  {networkArray.slice(0, 10)?.map((item) => (
+                    <p
+                      onClick={() => setBrandName(item.name)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {item.name}
+                    </p>
+                  ))}
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
@@ -216,8 +288,8 @@ const CategoryWiseDate = ({ id }) => {
                       <>
                         <img
                           src={
-                            item.images
-                              ? item.images
+                            item.images?.[0]?.image
+                              ? item.images?.[0]?.image
                               : "https://stores.blackberrys.com/VendorpageTheme/Enterprise/EThemeForBlackberrys/images/product-not-found.jpg "
                           }
                           onClick={() =>

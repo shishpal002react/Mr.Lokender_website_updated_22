@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import newImg from "../../Images/Group 38051.png";
 import newImg2 from "../../Images/Group 38050.png";
 import img from "../../Images/apple-iphone-x-pictures-5 1.png";
@@ -10,23 +10,34 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import axios from "axios";
 import Baseurl from "../../Baseurl";
 import Accordion from "react-bootstrap/Accordion";
+import Rating from "../RatingComponent/Rating";
+import { useNavigate } from "react-router-dom";
 
 const SubCategoryWiseDate = (id) => {
+  const navigate = useNavigate();
   const [centerSlidePercentage, setCenterSlidePercentage] = useState(100 / 4);
   const [products, setProducts] = useState([]);
+
+  const [category, setCategory] = useState([]);
+  const [categoryId, setCategoryId] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [brandName, setBrandName] = useState("");
+  const [sim, setSim] = useState("");
+  const [netWork, setNetwork] = useState("");
 
   const getProducts = async () => {
     console.log("ls", localStorage.getItem("boon"));
     //error sub category wise id is required
-    let url = `${Baseurl()}api/v1/product/650c3b22438e63e219b68ae6`;
+    // let url = `${Baseurl()}api/v1/product/650c3b22438e63e219b68ae6`;
+    let url = `${Baseurl()}api/v1/product/${id}`;
     try {
       const res = await axios.get(url, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("boon")}`,
         },
       });
-      console.log("produts", res.data.products);
-      setProducts(res.data.products);
+      setProducts(res.data.products?.reverse());
     } catch (error) {}
   };
 
@@ -52,7 +63,30 @@ const SubCategoryWiseDate = (id) => {
   }, []);
 
   // filter products
-  const [category, setCategory] = useState([]);
+
+  const brand = [
+    { _id: "1", name: "redmi" },
+    { _id: "2", name: "sumsung" },
+    { _id: "3", name: "lava" },
+    { _id: "4", name: "moto" },
+    { _id: "5", name: "realmi" },
+    { _id: "6", name: "google" },
+    { _id: "7", name: "apple" },
+  ];
+
+  const simArray = [
+    { _id: "1", name: "Single " },
+    { _id: "2", name: "Duel" },
+  ];
+
+  const networkArray = [
+    { _id: "1", name: "1g" },
+    { _id: "2", name: "2g" },
+    { _id: "3", name: "3g" },
+    { _id: "4", name: "4g" },
+    { _id: "5", name: "5g" },
+    { _id: "6", name: "6g" },
+  ];
   const gatCategory = async () => {
     let url = `${Baseurl()}api/v1/admin/allCategory`;
     try {
@@ -68,25 +102,23 @@ const SubCategoryWiseDate = (id) => {
     }
   };
 
+  const filterProduct = useCallback(async () => {
+    try {
+      const res = await axios.get(
+        `https://lokender-backend-api.vercel.app/api/v1/filters?minPrice=${minPrice}&maxPrice=${maxPrice}&categoryId=${categoryId}&brand=${brandName}&sim=${sim}&network=${netWork}`
+      );
+      setProducts(res.data.products);
+    } catch {}
+  }, [minPrice, maxPrice, categoryId, brandName, sim, netWork]);
+
   useEffect(() => {
     getProducts();
     gatCategory();
   }, []);
 
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(0);
-
-  const filterProduct = async () => {
-    try {
-      const res = await axios.get(
-        `https://lokender-backend-api.vercel.app/api/v1/filters?minPrice=${minPrice}&maxPrice=${maxPrice}`
-      );
-    } catch {}
-  };
-
   useEffect(() => {
     filterProduct();
-  }, [maxPrice, minPrice]);
+  }, [filterProduct]);
 
   return (
     <>
@@ -94,18 +126,23 @@ const SubCategoryWiseDate = (id) => {
         <div className="fashviewcontl">
           <h3>Filters</h3>
           <div className="filtercont ft">
-            <Accordion defaultActiveKey="0">
+            <Accordion defaultActiveKey="1">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>CATEGORIES</Accordion.Header>
                 <Accordion.Body>
                   {category.slice(0, 10)?.map((item) => (
-                    <p>{item.name}</p>
+                    <p
+                      onClick={() => setCategoryId(item._id)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {item?.name}
+                    </p>
                   ))}
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
 
-            <Accordion defaultActiveKey="0">
+            <Accordion defaultActiveKey="1">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>Prices</Accordion.Header>
                 <Accordion.Body>
@@ -118,27 +155,68 @@ const SubCategoryWiseDate = (id) => {
                     }}
                   >
                     <select onChange={(e) => setMinPrice(e.target.value)}>
-                      <option>₹5,000</option>
-                      <option value={"10000"}>₹10,000</option>
-                      <option>₹15,000</option>
-                      <option>₹20,000</option>
-                      <option>₹25,000</option>
-                      <option>₹30,000</option>
+                      <option value={"0"}>₹ 0</option>
+                      <option value={"1000"}>₹ 1,000</option>
+                      <option value={"2000"}>₹ 2,000</option>
+                      <option value={"3000"}>₹ 3,000</option>
                     </select>
                     <p style={{ marginTop: "6px" }}>To</p>
                     <select onChange={(e) => setMaxPrice(e.target.value)}>
-                      <option>₹5,000</option>
-                      <option value={"10000"}>₹10,000</option>
-                      <option>₹15,000</option>
-                      <option>₹20,000</option>
-                      <option>₹25,000</option>
-                      <option>₹30,000</option>
+                      <option value={"1000"}>₹ 1,000</option>
+                      <option value={"2000"}>₹ 2,000</option>
+                      <option value={"3000"}>₹ 3,000</option>
+                      <option value={"40000"}>₹ 4,000</option>
                     </select>
                   </div>
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
-            <div className="filteritem">
+            <Accordion defaultActiveKey="1">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>Brand</Accordion.Header>
+                <Accordion.Body>
+                  {brand.slice(0, 10)?.map((item) => (
+                    <p
+                      onClick={() => setBrandName(item.name)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {item.name}
+                    </p>
+                  ))}
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+            <Accordion defaultActiveKey="1">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>Sim Type</Accordion.Header>
+                <Accordion.Body>
+                  {simArray.slice(0, 10)?.map((item) => (
+                    <p
+                      onClick={() => setBrandName(item.name)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {item.name}
+                    </p>
+                  ))}
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+            <Accordion defaultActiveKey="1">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>Network Type</Accordion.Header>
+                <Accordion.Body>
+                  {networkArray.slice(0, 10)?.map((item) => (
+                    <p
+                      onClick={() => setBrandName(item.name)}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {item.name}
+                    </p>
+                  ))}
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+            {/* <div className="filteritem">
               <div class="dropdown">
                 <div className="dpc">
                   <span>BRAND</span>
@@ -217,7 +295,7 @@ const SubCategoryWiseDate = (id) => {
                   <i class="fa-solid fa-caret-down"></i>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -254,10 +332,17 @@ const SubCategoryWiseDate = (id) => {
                   <div className="three-sec">
                     <div className="left">
                       <div className="first">
-                        <img src={product.images[0]} alt="" />
+                        <img
+                          src={product.images[0]?.image}
+                          alt=""
+                          style={{ cursor: "pointer" }}
+                          onClick={() =>
+                            navigate(`/singleprodoctview/${product._id}`)
+                          }
+                        />
                         <div className="sub">
-                          <input type={"checkbox"} />
-                          <p>Add to Compare</p>
+                          {/* <input type={"checkbox"} />
+                          <p>Add to Compare</p> */}
                         </div>
                       </div>
 
@@ -265,36 +350,26 @@ const SubCategoryWiseDate = (id) => {
                         <p className="head">{product.name}</p>
                         <div className="stars">
                           <div>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-solid fa-star"></i>
-                            <i class="fa-regular fa-star"></i>
+                            <Rating rating={product?.ratings} />
                           </div>
-                          <p>{`1,55,257 Ratings & ${product.reviews.length} Reviews`}</p>
+                          <p>{`${product?.numOfReviews} Ratings & ${product?.ratings} Reviews`}</p>
                         </div>
                         <ul style={{ listStyle: "disc" }}>
-                          <li>{`${product.features[2]}`}</li>
-                          <li> {`${product.features[3]}`} </li>
-                          <li> {`${product.features[7]}`} </li>
-                          <li> {`${product.features[9]}`} </li>
-                          <li>
-                            {" "}
-                            1 year Warranty Provided by the Manufacture from
-                            date of purchase{" "}
-                          </li>
+                          {product?.features?.map((item, i) => (
+                            <li key={i}>{item}</li>
+                          ))}
                         </ul>
                       </div>
                     </div>
                     <div className="right">
                       <div className="upper">
-                        <p>{`₹${product.price}`}</p>
+                        <p>{`₹${product?.offerPrice}`}</p>
                         <img src={img2} alt="" />
                       </div>
                       <div className="down">
-                        <p className="thorught"> ₹14,999</p>
+                        <p className="thorught"> ₹{product?.mrp}</p>
                         <p className="thorught2" style={{ color: "#075522" }}>
-                          35% off
+                          {product?.discountPercent}% off
                         </p>
                       </div>
                       <p style={{ fontSize: "14px" }}>Free delivery</p>
@@ -307,9 +382,9 @@ const SubCategoryWiseDate = (id) => {
                       >
                         Top Discount on Sale
                       </p>
-                      <p style={{ fontSize: "14px" }}>
+                      {/* <p style={{ fontSize: "14px" }}>
                         Upto <strong>₹9,150</strong> off on Exchange
-                      </p>
+                      </p> */}
                     </div>
                   </div>
                 );

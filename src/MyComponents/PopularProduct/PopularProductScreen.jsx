@@ -287,7 +287,7 @@ const PopularProductScreen = () => {
               id="slider"
               className=" fashrightcont w-full h-full overflow-x-scroll scroll whitespace-nowrap scroll-smooth scrollbar-hide"
             >
-              {offerData.map((item) => (
+              {offerData?.map((item) => (
                 <div className="fashrightlabel w-[220px] inline-block p-2 cursor-pointer hover:scale-105 case-in-out duration-300">
                   <h3>{item?.brand}</h3>
                 </div>
@@ -301,7 +301,7 @@ const PopularProductScreen = () => {
                 {products?.map((item) => (
                   <div className="proditm">
                     <img
-                      src={item?.images?.[0]}
+                      src={item?.images?.[0]?.image}
                       onClick={() => navigate(`/singleprodoctview/${item._id}`)}
                       alt=""
                       className="thumbNail"

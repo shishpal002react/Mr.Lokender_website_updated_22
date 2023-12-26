@@ -215,7 +215,10 @@ const Cart = () => {
                   <div className="cartcont2l">
                     <div className="cartprod">
                       <div className="cartprodl">
-                        <img src={product?.productId?.images?.[0]} alt="" />
+                        <img
+                          src={product?.productId?.images?.[0]?.image}
+                          alt=""
+                        />
                       </div>
                       <div className="cartprodr">
                         <h6>Product Name: {product?.productId?.name}</h6>
@@ -331,7 +334,7 @@ const Cart = () => {
           </div> */}
         </div>
 
-        {cartDetails && (
+        {cartDetails?.totalAmount > 0 && (
           <div className="cartcontr">
             <h5>Price Details</h5>
             <hr style={{ width: "90%", marginTop: "2%" }} />

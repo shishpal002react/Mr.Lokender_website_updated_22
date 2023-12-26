@@ -86,7 +86,7 @@ const AllCategoryProducts = ({ id }) => {
           Authorization: `Bearer ${localStorage.getItem("boon")}`,
         },
       });
-      //   console.log("product from product product id",res.data);
+
       setProduct(res.data.data);
     } catch (error) {
       console.log(error);
@@ -134,16 +134,16 @@ const AllCategoryProducts = ({ id }) => {
                 <div className="product-card m-2 bg-white shadow-lg p-3  border rounded-lg">
                   <img
                     onClick={() => navigate(`/singleprodoctview/${item._id}`)}
-                    src={item?.images?.[0]}
+                    src={item?.images?.[0]?.image}
                     alt={item.name}
                     className="h-44 cursor-pointer mx-auto flex flex-col items-center  object-cover overflow-hidden"
                   />
                   <h2 className="text-lg font-medium mb-2">
-                    {item.name}
+                    {item?.name}
                     {/*e.title.length >= 20 ? "..." : ""*/}
                   </h2>
 
-                  <h3 className="text-base">{item.price}</h3>
+                  <h3 className="text-base">{item?.price}</h3>
                 </div>
               ))}
             </div>
