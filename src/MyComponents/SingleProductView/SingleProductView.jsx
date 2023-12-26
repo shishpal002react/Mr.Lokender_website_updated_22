@@ -234,7 +234,7 @@ const SingleProductView = () => {
                 <div className="flex2lc">
                   <h6>Rating </h6>
                   <div className="staricon">
-                    <Rating rating={singleData.ratings} />
+                    <Rating rating={singleData?.ratings} />
                   </div>
                 </div>
                 <h6>{singleData.ratings}</h6>

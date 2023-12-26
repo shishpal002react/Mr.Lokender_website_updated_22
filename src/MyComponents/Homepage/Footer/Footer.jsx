@@ -42,7 +42,6 @@ const Footer = () => {
   const [footerDescription, setFooterDescription] = useState([]);
 
   const getFooterData = async () => {
-
     let url = `${Baseurl()}api/v1/detail`;
     try {
       const res = await axios.get(url, {
@@ -112,7 +111,7 @@ const Footer = () => {
         </h2>
         <p style={{ marginTop: "20px" }}>
           MOST SEARCHED FOR ON SHUBHARAMBH :
-          {products.map((item) => (
+          {products?.slice(0, 75)?.map((item) => (
             <span
               onClick={() => navigate(`/singleprodoctview/${item._id}`)}
               style={{ cursor: "pointer" }}
